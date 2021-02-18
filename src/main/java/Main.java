@@ -1,12 +1,13 @@
-import java.io.File;
+import ir.soroushtabesh.hw3.graphics.GUI;
+
 import java.io.IOException;
+import java.nio.file.Files;
 import java.nio.file.Path;
 
 public class Main {
     public static void main(String[] args) throws IOException {
-        Path path = Path.of("/a");
-        System.out.println(path.relativize(Path.of("/a/b/s")));
-
-//        GUI.main(args);
+//        var content = new byte[]{2, 3, 4, 5, 6, 2, 3, 4, 5, 6, 2, 3, 6, 1, 2};
+//        Files.write(Path.of("/Users/soroushtabesh/IdeaProjects/simple-compressor/src/main/resources/dirTest/b.txt"), content);
+        GUI.main(args);
     }
 }

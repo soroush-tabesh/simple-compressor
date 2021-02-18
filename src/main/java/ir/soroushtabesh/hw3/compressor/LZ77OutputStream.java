@@ -27,13 +27,21 @@ public class LZ77OutputStream extends OutputStream {
     private void addToDict(int lastIndex, int length) { // exclusive index
         if (length <= 0)
             return;
-        for (int len = 1; len <= Math.min(config.getBufferSize(), lastIndex); len++) {
-            var subArray = new SubArray(windowBuffer, lastIndex - length + 1 - len, lastIndex - length + 1);
+        for (int len = 1; len <= Math.min(config.getBufferSize(), lastIndex - length + 1); len++) {
+            SubArray subArray;
+            Deque<SubArray> queue;
+            try {
+                subArray = new SubArray(windowBuffer, lastIndex - length + 1 - len, lastIndex - length + 1);
 //            System.out.println(subArray);
-            var queue = dict.getOrDefault(subArray, new ArrayDeque<>(2));
-            dict.remove(subArray);
-            queue.add(subArray);
-            dict.put(subArray, queue);
+                queue = dict.getOrDefault(subArray, new ArrayDeque<>(2));
+                dict.remove(subArray);
+                queue.add(subArray);
+                dict.put(subArray, queue);
+            } catch (Exception e) {
+                System.err.printf("%d,%d\n", lastIndex - length + 1 - len, lastIndex - length + 1);
+                System.err.printf("%d,%d,%d\n", lastIndex, length, len);
+                throw e;
+            }
         }
         if (lastIndex > config.getWindowSize())
             removeFromDict(lastIndex - config.getBufferSize() - length);
@@ -83,7 +91,6 @@ public class LZ77OutputStream extends OutputStream {
                 }
             } else {
                 // no compress
-                System.err.println("asda");
                 while (lastPtr < windowBuffer.getPointer() - 1) {
                     outputStream.write(windowBuffer.get(lastPtr++));
                 }

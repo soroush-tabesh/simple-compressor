@@ -26,7 +26,7 @@ public class Descriptor implements Serializable {
                 discover(root, element);
             }
         } else {
-            files.add(new FileEntry(root.relativize(file.toPath()).toString(), file.hashCode(), file.length()));
+            files.add(new FileEntry(root.getParent().relativize(file.toPath()).toString(), file.length()));
         }
     }
 

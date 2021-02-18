@@ -2,9 +2,7 @@ package ir.soroushtabesh.hw3.compressor;
 
 public class LZ77 {
 
-    private final int windowSize, bufferSize;
     private final int windowSizeExp, bufferSizeExp;
-    private final int lengthThreshold;
 
     public LZ77(int windowSizeExp, int bufferSizeExp) {
         if (windowSizeExp < bufferSizeExp)
@@ -13,15 +11,12 @@ public class LZ77 {
             throw new RuntimeException("too large window");
         if (bufferSizeExp >= 8)
             throw new RuntimeException("too large buffer size");
-        this.windowSize = 1 << windowSizeExp;
-        this.bufferSize = 1 << bufferSizeExp;
         this.windowSizeExp = windowSizeExp;
         this.bufferSizeExp = bufferSizeExp;
-        lengthThreshold = 1 + (bufferSizeExp + windowSizeExp + 7) / 8;
     }
 
     public int getLengthThreshold() {
-        return lengthThreshold;
+        return 1 + (bufferSizeExp + windowSizeExp + 7) / 8;
     }
 
     public int getWindowSizeExp() {
@@ -33,10 +28,10 @@ public class LZ77 {
     }
 
     public int getWindowSize() {
-        return windowSize;
+        return 1 << windowSizeExp;
     }
 
     public int getBufferSize() {
-        return bufferSize;
+        return 1 << bufferSizeExp;
     }
 }

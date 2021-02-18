@@ -39,11 +39,12 @@ public class LZ77InputStream extends InputStream {
         }
 //        System.err.println(res);
         long len = (res & ((1L << config.getBufferSizeExp()) - 1)) + 1;
-        long pos = res >> config.getBufferSizeExp();
+        long pos = (res >> config.getBufferSizeExp()) & (config.getWindowSize() - 1);
 //        System.err.println(len);
 //        System.err.println(pos);
 //        System.err.println(((1L << config.getBufferSizeExp()) - 1));
         for (int i = (int) pos; i < len + pos; i++) {
+            System.out.println(pos);
             outQueue.add(windowBuffer.get(i));
         }
         temp = outQueue.poll();

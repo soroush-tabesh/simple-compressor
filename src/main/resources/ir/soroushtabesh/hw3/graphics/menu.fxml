@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ListView?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+
+<AnchorPane prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/11.0.1"
+            xmlns:fx="http://javafx.com/fxml/1" fx:controller="ir.soroushtabesh.hw3.graphics.Menu">
+    <HBox layoutX="14.0" layoutY="14.0" spacing="30.0">
+        <VBox spacing="10.0">
+            <Label text="Decompress:"/>
+            <HBox alignment="CENTER_LEFT" spacing="10.0">
+                <Button mnemonicParsing="false" onAction="#selectInDec" text="Select"/>
+                <Label text="Input:"/>
+                <TextField fx:id="inDecText" maxWidth="200.0" text="..."/>
+            </HBox>
+            <HBox alignment="CENTER_LEFT" layoutX="10.0" layoutY="37.0" spacing="10.0">
+                <Button mnemonicParsing="false" onAction="#selectOutDec" text="Select"/>
+                <Label text="Output"/>
+                <TextField fx:id="outDecText" maxWidth="200.0" text="..."/>
+            </HBox>
+            <ListView fx:id="filesListView" prefHeight="200.0" prefWidth="200.0"/>
+            <TextField fx:id="passDec" maxWidth="200.0" promptText="Leave empty to set no password"/>
+            <Button mnemonicParsing="false" onAction="#decompress" text="Decompress"/>
+        </VBox>
+        <VBox spacing="10.0">
+            <Label text="Compress:"/>
+            <HBox alignment="CENTER_LEFT" spacing="10.0">
+                <Button mnemonicParsing="false" onAction="#selectInComp" text="Select"/>
+                <Label text="Input:"/>
+                <TextField fx:id="inCompText" maxWidth="200.0" text="..."/>
+            </HBox>
+            <HBox alignment="CENTER_LEFT" layoutX="10.0" layoutY="27.0" spacing="10.0">
+                <Button mnemonicParsing="false" onAction="#selectOutComp" text="Select"/>
+                <Label text="Output:"/>
+                <TextField fx:id="outCompText" maxWidth="200.0" text="..."/>
+            </HBox>
+            <TextField fx:id="passComp" maxWidth="200.0" promptText="Leave empty to set no password"/>
+            <Button mnemonicParsing="false" onAction="#compress" text="Compress"/>
+        </VBox>
+    </HBox>
+</AnchorPane>
