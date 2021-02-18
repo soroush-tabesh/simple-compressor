@@ -1,7 +1,8 @@
-import ir.soroushtabesh.hw3.graphics.GUI;
+import java.io.IOException;
 
 public class Main {
     public static void main(String[] args) {
-        GUI.main(args);
+
+//        GUI.main(args);
     }
 }
