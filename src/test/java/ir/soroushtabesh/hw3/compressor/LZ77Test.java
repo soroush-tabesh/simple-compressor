@@ -19,14 +19,14 @@ class LZ77Test {
             PrintWriter writer = new PrintWriter(fileComp);
             writer.close();
         }
-        try (var fos = new FileOutputStream(fileComp);
+        try (var fos = new BufferedOutputStream(new FileOutputStream(fileComp));
              var los = new LZ77OutputStream(fos, lz77)) {
             for (int i : content) {
                 los.write(i);
             }
             los.flush();
         }
-        try (var fis = new FileInputStream(fileComp);
+        try (var fis = new BufferedInputStream(new FileInputStream(fileComp));
              var lis = new LZ77InputStream(fis, lz77)) {
             assertArrayEquals(lis.readAllBytes(), content);
         }
