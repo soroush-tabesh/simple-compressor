@@ -30,6 +30,10 @@ public class Descriptor implements Serializable {
         }
     }
 
+    public boolean isProtect() {
+        return protect;
+    }
+
     public List<FileEntry> getFiles() {
         return Collections.unmodifiableList(files);
     }
