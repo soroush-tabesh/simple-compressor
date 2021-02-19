@@ -36,7 +36,7 @@ public class LZ77InputStream extends InputStream {
 
         byte[] data = inputStream.readNBytes(config.getLengthOfData());
         long len = config.decodeLength(data);
-        long pos = config.decodeIndex(data);
+        long pos = windowBuffer.getPointer() - config.decodeIndex(data) + len;
 
 //        System.out.println(len + " " + pos + " " + LZ77.toLong(data));
         for (int i = (int) pos; i < len + pos; i++) {

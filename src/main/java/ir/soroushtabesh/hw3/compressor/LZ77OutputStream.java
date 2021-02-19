@@ -85,7 +85,8 @@ public class LZ77OutputStream extends OutputStream {
             if (subArray.getLength() > config.getLengthOfData() + 1) {
                 // compress
                 outputStream.write(0);
-                byte[] data = config.encode(subArray.getLength(), match.peekLast().getStart());
+                byte[] data = config.encode(subArray.getLength(),
+                        windowBuffer.getPointer() - 1 - match.peekLast().getStart());
                 outputStream.write(data);
             } else {
                 // no compress
