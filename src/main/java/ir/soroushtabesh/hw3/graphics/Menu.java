@@ -29,6 +29,9 @@ public class Menu {
         filesListView.getItems().clear();
         if (descriptor != null)
             filesListView.getItems().addAll(descriptor.getFiles());
+        else
+            new Alert(Alert.AlertType.ERROR, "Incorrect File").showAndWait();
+
     }
 
     public void selectOutDec(ActionEvent actionEvent) {
@@ -41,7 +44,8 @@ public class Menu {
 
     public void decompress(ActionEvent actionEvent) {
         try {
-            Compressor.decompress(inCompText.getText(), outCompText.getText(), passDec.getText());
+            Compressor.decompress(inDecText.getText(), outDecText.getText(), passDec.getText());
+            new Alert(Alert.AlertType.INFORMATION, "Done").showAndWait();
         } catch (Exception e) {
             e.printStackTrace();
             new Alert(Alert.AlertType.ERROR, "Error").showAndWait();
@@ -67,7 +71,8 @@ public class Menu {
     public void compress(ActionEvent actionEvent) {
         try {
             Compressor.compress(inCompText.getText(), outCompText.getText()
-                    , new LZ77(16, 7), passDec.getText());
+                    , new LZ77(16, 7), passComp.getText());
+            new Alert(Alert.AlertType.INFORMATION, "Done").showAndWait();
         } catch (Exception e) {
             e.printStackTrace();
             new Alert(Alert.AlertType.ERROR, "Error").showAndWait();
