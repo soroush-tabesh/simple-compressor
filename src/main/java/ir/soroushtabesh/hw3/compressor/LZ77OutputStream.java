@@ -63,7 +63,7 @@ public class LZ77OutputStream extends OutputStream {
         if (b == 0)
             throw new IOException("can't write zero in output.");
 
-        windowBuffer.add((byte) b); //fixme: start id for write
+        windowBuffer.add((byte) b);
 
         var subArray = new SubArray(windowBuffer, lastPtr, windowBuffer.getPointer());
         var match = dict.get(subArray);
@@ -86,7 +86,7 @@ public class LZ77OutputStream extends OutputStream {
                 // compress
                 outputStream.write(0);
                 byte[] data = config.encode(subArray.getLength(),
-                        windowBuffer.getPointer() - 1 - match.peekLast().getStart());
+                        windowBuffer.getPointer() - 2 - match.peekLast().getStart());
                 outputStream.write(data);
             } else {
                 // no compress

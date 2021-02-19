@@ -1,7 +1,5 @@
 package ir.soroushtabesh.hw3.compressor;
 
-import java.nio.ByteBuffer;
-
 public class LZ77 {
 
     private final int windowSizeExp, bufferSizeExp;
@@ -38,7 +36,7 @@ public class LZ77 {
     }
 
     public byte[] encode(long length, long index) {
-        if (length > getBufferSize() || index >= getWindowSize())
+        if (length > getBufferSize() || index >= getWindowSize() || length < 1 || index < 0)
             throw new RuntimeException("invalid length or index");
         long res = (length - 1) | (index << getBufferSizeExp());
         byte[] data = new byte[getLengthOfData()];
