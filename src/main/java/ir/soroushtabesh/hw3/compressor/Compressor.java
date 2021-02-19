@@ -53,6 +53,7 @@ public class Compressor {
         fos = new BufferedOutputStream(fos);
 
         writeDescriptor(fos, descriptor);
+        fos.flush();
 
         if (protect) {
             var key = new SecretKeySpec(password.getBytes(), "AES");
@@ -69,9 +70,9 @@ public class Compressor {
             try (var fis = new BufferedInputStream(new FileInputStream(inFile))) {
                 fis.transferTo(fos);
             }
+            fos.flush();
         }
 
-        fos.flush();
         fos.close();
     }
 
@@ -115,9 +116,11 @@ public class Compressor {
             var file = Path.of(outPathName, fileEntry.getRelPath()).toFile();
             createFile(file);
             long length = fileEntry.getLength();
-            System.out.println("AS");
+
+//            System.out.println("AS");
             OutputStream fos = new FileOutputStream(file);
             fos = new BufferedOutputStream(fos);
+
             copyStream(fis, fos, length);
             fos.flush();
             fos.close();

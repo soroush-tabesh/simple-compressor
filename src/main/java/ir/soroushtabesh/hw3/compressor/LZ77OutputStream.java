@@ -24,28 +24,28 @@ public class LZ77OutputStream extends OutputStream {
         windowBuffer = new WindowBuffer(config.getWindowSize() + 2 * config.getBufferSize() + 1);
     }
 
-    private void addToDict(int lastIndex, int length) { // exclusive index
-        if (length <= 0)
+    private void addToDict(int lastIndex, int offset) { // exclusive index
+        if (offset <= 0)
             return;
-        for (int len = 1; len <= Math.min(config.getBufferSize(), lastIndex - length + 1); len++) {
+        for (int len = 1; len <= Math.min(config.getBufferSize(), lastIndex - offset + 1); len++) {
             SubArray subArray;
             Deque<SubArray> queue;
             try {
-                subArray = new SubArray(windowBuffer, lastIndex - length + 1 - len, lastIndex - length + 1);
+                subArray = new SubArray(windowBuffer, lastIndex - offset + 1 - len, lastIndex - offset + 1);
 //            System.out.println(subArray);
                 queue = dict.getOrDefault(subArray, new ArrayDeque<>(2));
                 dict.remove(subArray);
                 queue.add(subArray);
                 dict.put(subArray, queue);
             } catch (Exception e) {
-                System.err.printf("%d,%d\n", lastIndex - length + 1 - len, lastIndex - length + 1);
-                System.err.printf("%d,%d,%d\n", lastIndex, length, len);
+                System.err.printf("%d,%d\n", lastIndex - offset + 1 - len, lastIndex - offset + 1);
+                System.err.printf("%d,%d,%d\n", lastIndex, offset, len);
                 throw e;
             }
         }
         if (lastIndex > config.getWindowSize())
-            removeFromDict(lastIndex - config.getBufferSize() - length);
-        addToDict(lastIndex, length - 1);
+            removeFromDict(lastIndex - config.getWindowSize() - offset);
+        addToDict(lastIndex, offset - 1);
     }
 
     private void removeFromDict(int firstIndex) { //inclusive index
@@ -63,40 +63,48 @@ public class LZ77OutputStream extends OutputStream {
         if (b == 0)
             throw new IOException("can't write zero in output.");
 
-        windowBuffer.add((byte) b);
+        windowBuffer.add((byte) b); //fixme: start id for write
 
         var subArray = new SubArray(windowBuffer, lastPtr, windowBuffer.getPointer());
         var match = dict.get(subArray);
 
         if (match == null || match.isEmpty()) {
-            // create previous subarray of buffer
-            subArray = new SubArray(windowBuffer, lastPtr, windowBuffer.getPointer() - 1);
 
-            if (subArray.getLength() == 0) {
+            if (subArray.getLength() == 1) {
                 addToDict(++lastPtr, 1);
                 outputStream.write(b);
                 return;
             }
 
+            // create previous subarray of buffer
+            subArray = new SubArray(windowBuffer, lastPtr, windowBuffer.getPointer() - 1);
+
             // search in window
             match = dict.get(subArray);
 
-            if (subArray.getLength() > config.getLengthThreshold()) {
+            if (subArray.getLength() > config.getLengthOfData() + 1) {
                 // compress
                 outputStream.write(0);
-                long res = (subArray.getLength() - 1) | ((long) match.peekLast().getStart() << config.getBufferSizeExp());
-//                System.err.printf("%d %d %d \n", subArray.getLength(), match.peek().getStart(), res);
-                for (int i = config.getLengthThreshold() - 2; i >= 0; i--) {
-                    outputStream.write((int) (res & (255 << 8 * i)));
-                }
+                byte[] data = config.encode(subArray.getLength(), match.peekLast().getStart());
+                outputStream.write(data);
             } else {
                 // no compress
-                while (lastPtr < windowBuffer.getPointer() - 1) {
-                    outputStream.write(windowBuffer.get(lastPtr++));
+                for (int i = subArray.getStart(); i < subArray.getEnd(); i++) {
+                    outputStream.write(windowBuffer.get(i));
                 }
             }
             lastPtr = subArray.getEnd();
             addToDict(lastPtr, subArray.getLength());
+
+            // take care of last character
+            subArray = new SubArray(windowBuffer, lastPtr, windowBuffer.getPointer());
+            match = dict.get(subArray);
+
+            if (match == null || match.isEmpty()) {
+                addToDict(++lastPtr, 1);
+                outputStream.write(b);
+            }
+
         }
     }
 

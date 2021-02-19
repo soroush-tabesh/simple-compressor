@@ -27,24 +27,19 @@ public class LZ77InputStream extends InputStream {
             windowBuffer.add(temp);
             return temp;
         }
+
         int b = inputStream.read();
         if (b != 0) {
             windowBuffer.add(b);
             return b;
         }
-        byte[] conf = inputStream.readNBytes(config.getLengthThreshold() - 1);
-        long res = 0;
-        for (int i = config.getLengthThreshold() - 2; i >= 0; i--) {
-            res |= (long) conf[i] << 8 * i;
-        }
-//        System.err.println(res);
-        long len = (res & ((1L << config.getBufferSizeExp()) - 1)) + 1;
-        long pos = (res >> config.getBufferSizeExp()) & (config.getWindowSize() - 1);
-//        System.err.println(len);
-//        System.err.println(pos);
-//        System.err.println(((1L << config.getBufferSizeExp()) - 1));
+
+        byte[] data = inputStream.readNBytes(config.getLengthOfData());
+        long len = config.decodeLength(data);
+        long pos = config.decodeIndex(data);
+
+//        System.out.println(len + " " + pos + " " + LZ77.toLong(data));
         for (int i = (int) pos; i < len + pos; i++) {
-            System.out.println(pos);
             outQueue.add(windowBuffer.get(i));
         }
         temp = outQueue.poll();
